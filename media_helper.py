@@ -7,10 +7,11 @@ Setup:   pip install winsdk
 Run:     python media_helper.py
 Then in CodeHUB click the 💻 button in the player bar.
 
-Listens on 127.0.0.1:5959 only, and only answers pages opened from your own PC
-(file:// or http://127.0.0.1 / http://localhost).
+Listens on 127.0.0.1:5959 only. Answers pages opened from your own PC
+(file:// or http://127.0.0.1 / http://localhost). To use it from a hosted site, e.g. Vercel:
+    python media_helper.py --allow https://your-app.vercel.app
 """
-import asyncio, base64, json, threading
+import argparse, asyncio, base64, json, threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from winsdk.windows.media.control import (
     GlobalSystemMediaTransportControlsSessionManager as Manager,
@@ -18,7 +19,12 @@ from winsdk.windows.media.control import (
 )
 from winsdk.windows.storage.streams import DataReader
 
+ap = argparse.ArgumentParser(description="CodeHUB media helper")
+ap.add_argument("--allow", action="append", default=[], metavar="ORIGIN",
+                help="extra website allowed to use this helper, e.g. https://codehub.vercel.app (repeatable)")
+EXTRA = [o.rstrip("/") for o in ap.parse_args().allow]
 PORT = 5959
+_denied = set()
 loop = asyncio.new_event_loop()
 _thumb_cache = {"key": None, "data": None}
 
@@ -86,7 +92,11 @@ async def act(name):
 
 
 def allowed(origin):
-    return origin in (None, "", "null") or origin.startswith(("http://127.0.0.1", "http://localhost"))
+    ok = origin in (None, "", "null") or origin.startswith(("http://127.0.0.1", "http://localhost")) or origin.rstrip("/") in EXTRA
+    if not ok and origin not in _denied:
+        _denied.add(origin)
+        print(f"Blocked request from {origin}\n  -> to allow it, restart with:  python media_helper.py --allow {origin}")
+    return ok
 
 
 class Handler(BaseHTTPRequestHandler):
