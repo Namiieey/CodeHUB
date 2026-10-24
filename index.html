@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CodeHUB by Namith</title>
+<link rel="icon" href="https://plain-apac-prod-public.komododecks.com/202610/23/dTuqfxS9sO9h52Vv2yvY/image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0b0c;--panel:#131315;--card:#171719;--line:#252529;--tx:#e9eef4;--mu:#8b94a0;--b:#7cc4ff;--b2:#4aa8f0;--ok:#5ee0a0;--no:#ff5a5f;--warn:#ffc46b;color-scheme:dark}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--tx);font:14px/1.5 Inter,system-ui,Segoe UI,sans-serif;min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
+.hide{display:none!important}
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;text-align:center;background:radial-gradient(600px 400px at 50% 20%,#7cc4ff14,transparent)}
+#login img{width:72px;height:72px;border-radius:18px;margin-bottom:14px;box-shadow:0 0 40px #7cc4ff30}
+#login h1{font-size:26px;letter-spacing:-.02em}#login p{color:var(--mu);margin:4px 0 26px}
+.cs{position:relative;display:inline-flex;gap:10px;cursor:text}.cs input{position:absolute;inset:0;opacity:0;width:100%;z-index:2}
+.cslot{position:relative;width:54px;height:64px;border-radius:14px;background:#1e1e21;overflow:hidden;display:grid;place-items:center;transition:background .2s}
+.cslot i{position:absolute;inset:0;background:var(--b);transform:scale(0);transition:transform .3s cubic-bezier(.34,1.5,.64,1);border-radius:inherit}
+.cslot.on i{transform:scale(1)}.cslot b{position:relative;font-size:26px;color:#0b0b0c;font-weight:700;transform:translateY(8px);opacity:0;transition:.3s}.cslot.on b{transform:none;opacity:1}
+.cslot.act:not(.on){background:#2a2a2f;box-shadow:inset 0 0 0 1.5px #7cc4ff55}
+.cs[data-s=error] .cslot{background:#3a1a1c}.cs[data-s=error] i{background:var(--no)}.cs[data-s=error]{animation:shake .4s}
+.cs[data-s=success] .cslot.on i{background:var(--ok)}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+#lmsg{height:20px;margin:16px 0 18px;color:var(--mu);font-size:13px}
+/* slide */
+.sl{position:relative;width:280px;height:52px;border-radius:26px;background:#1e1e21;margin:0 auto;touch-action:none;user-select:none}
+.sll{position:absolute;inset:0;display:grid;place-items:center;color:#7cc4ff88;font-weight:500}
+.slh{position:absolute;left:4px;top:4px;height:44px;width:44px;border-radius:22px;background:var(--b);color:#0b0b0c;display:grid;place-items:center;cursor:grab;font-weight:600;gap:6px;transition:width .35s cubic-bezier(.23,1,.32,1),background .2s;white-space:nowrap;overflow:hidden}
+.slh.drag{transition:none;cursor:grabbing}.slh.spin svg{animation:rot 1s linear infinite}.slh.done{background:var(--ok);display:flex;justify-content:center;gap:6px}.slh.err{background:var(--no);color:#fff}
+@keyframes rot{to{transform:rotate(360deg)}}
+.sl.danger .slh{background:var(--no);color:#fff}
+/* layout */
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:18px;padding:12px 28px;background:#0b0b0cd9;backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}.logo img{width:32px;height:32px;border-radius:9px}.logo small{color:var(--mu);font-weight:400;font-size:12px}
+nav{display:flex;gap:4px;margin-left:18px}nav button{background:none;border:0;padding:7px 14px;border-radius:9px;color:var(--mu);cursor:pointer}nav button.on{background:#7cc4ff1a;color:var(--b)}
+.sp{flex:1}main{max-width:1280px;margin:0 auto;padding:26px 28px 60px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel);cursor:pointer;transition:.18s}.btn:hover{border-color:var(--b);color:var(--b)}
+.btn.pri{background:var(--b);color:#08111a;border-color:var(--b);font-weight:600}.btn.pri:hover{background:#a3d6ff;color:#08111a}.btn.dg{color:var(--no)}
+.ic{width:32px;height:32px;display:inline-grid;place-items:center;border-radius:8px;border:1px solid transparent;background:none;cursor:pointer;color:var(--mu);transition:.18s}.ic:hover{background:#7cc4ff14;color:var(--b)}
+h2{font-size:20px;letter-spacing:-.01em;margin-bottom:14px}h4{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mu);margin-bottom:12px;font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.stat,.box{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;transition:.2s}.stat:hover{border-color:#7cc4ff55;transform:translateY(-2px)}
+.stat b{display:block;font-size:30px;letter-spacing:-.03em;color:var(--b)}.stat span{color:var(--mu);font-size:12px}.stat.od b{color:var(--no)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:12px}
+.bar{height:6px;background:#26262b;border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--b2),var(--b));border-radius:6px;transition:width .5s}
+.dist{display:flex;height:12px;border-radius:8px;overflow:hidden;gap:2px;margin-bottom:12px}.dist i{display:block;transition:.4s}
+.leg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--mu)}.leg u{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;text-decoration:none}
+.li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:13px;cursor:pointer}.li:first-of-type{border-top:0}.li span{color:var(--mu);white-space:nowrap}.li:hover b{color:var(--b)}.none{color:var(--mu);font-size:13px}
+.tool{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}.tool input,.tool select,.fm input,.fm select,.fm textarea{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;outline:0}
+.tool input:focus,.fm input:focus,.fm select:focus,.fm textarea:focus{border-color:var(--b)}.tool input{flex:1;min-width:200px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}.cards.list{grid-template-columns:1fr}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px;transition:.2s;animation:in .3s both}
+.card:hover{border-color:#7cc4ff66;transform:translateY(-2px);box-shadow:0 10px 30px #00000060}@keyframes in{from{opacity:0;transform:translateY(6px)}}
+.list .card{display:grid;grid-template-columns:2fr 2fr 1.2fr 1.4fr auto;align-items:center;gap:14px}
+.ch{display:flex;justify-content:space-between;gap:8px}.ch h3{font-size:16px;margin-bottom:5px}.d{color:var(--mu);font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pill{display:inline-block;padding:1px 9px;border-radius:20px;font-size:11px;background:#26262b;margin-right:4px;border:1px solid transparent}
+.s-Active{color:var(--b);background:#7cc4ff18}.s-Completed{color:var(--ok);background:#5ee0a018}.s-OnHold{color:var(--warn);background:#ffc46b18}.s-Planning{color:#c4b5ff;background:#c4b5ff18}.s-Archived{color:var(--mu)}
+.pr-High{color:var(--no)}.pr-Medium{color:var(--warn)}.pr-Low{color:var(--mu)}.od{color:#fff;background:#ff5a5f55}
+.meta{display:flex;justify-content:space-between;color:var(--mu);font-size:12px}.tags{display:flex;flex-wrap:wrap;gap:5px}.tags em{font-style:normal;font-size:11px;padding:1px 8px;border-radius:6px;background:#202024;color:var(--mu)}.tags em.t{color:var(--b);background:#7cc4ff14}
+.fs{display:flex;justify-content:space-between;font-size:12px;color:var(--mu);gap:8px}.fs span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fs b{font-weight:500;white-space:nowrap}.fs .ok{color:var(--ok)}.fs .wn{color:var(--warn)}
+.acts{display:flex;gap:4px;align-items:center;margin-top:auto}.acts .btn{flex:1;justify-content:center}
+.pinned{color:var(--b)}
+/* modal */
+.ov{position:fixed;inset:0;z-index:50;background:#000a;backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px;animation:fade .2s}@keyframes fade{from{opacity:0}}
+.md{background:var(--panel);border:1px solid var(--line);border-radius:20px;width:min(640px,100%);max-height:92vh;overflow:auto;padding:22px}
+.fm{display:grid;grid-template-columns:1fr 1fr;gap:12px}.fm label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mu)}.fm .w{grid-column:1/-1}.fm textarea{resize:vertical;min-height:60px}
+.fm input[type=range]{padding:0;accent-color:var(--b)}.ft{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.note{font-size:12px;color:var(--warn);background:#ffc46b12;border:1px solid #ffc46b30;border-radius:10px;padding:10px;margin:10px 0}
+.fl{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:12px}.fl div{display:flex;justify-content:space-between;padding:7px 12px;border-top:1px solid var(--line);font-size:13px}.fl div:first-child{border-top:0}.fl .dir{cursor:pointer;color:var(--b)}.fl .dir:hover{background:#7cc4ff10}
+#toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:99;display:grid;gap:8px}#toast div{background:#1d1d21;border:1px solid var(--b);padding:10px 16px;border-radius:12px;animation:in .25s;max-width:90vw}
+@media(max-width:800px){.list .card{grid-template-columns:1fr}header{flex-wrap:wrap;padding:10px 16px}main{padding:18px 14px}.fm{grid-template-columns:1fr}}
+
+body{font-family:Inter,system-ui,sans-serif;background:radial-gradient(900px 500px at 85% -10%,color-mix(in srgb,var(--b) 14%,transparent),transparent),radial-gradient(700px 400px at -10% 30%,#ffffff06,transparent),var(--bg)}
+header{margin:14px auto 0;max-width:1240px;border:1px solid var(--line);border-radius:20px;background:#121214bf;top:12px}
+nav{background:#0b0b0c;border:1px solid var(--line);border-radius:12px;padding:3px}nav button{border-radius:9px}nav button.on{background:color-mix(in srgb,var(--b) 16%,transparent)}
+.btn{border-radius:12px;background:#1a1a1d}.btn.pri{background:linear-gradient(135deg,var(--b),color-mix(in srgb,var(--b) 60%,#5b8cff));box-shadow:0 6px 20px -8px var(--b)}
+a.ic{text-decoration:none;font-size:15px}.sw{width:16px;height:16px;border-radius:50%;border:2px solid #0b0b0c;box-shadow:0 0 0 1px var(--line);cursor:pointer;margin-right:4px;padding:0}.sw:hover{transform:scale(1.25)}
+.card,.stat,.box{position:relative;overflow:hidden;background:linear-gradient(160deg,#1b1b1e,#121214);border-radius:20px}
+.card::after,.stat::after,.box::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:.3s;background:radial-gradient(240px circle at var(--mx,50%) var(--my,0),color-mix(in srgb,var(--b) 16%,transparent),transparent)}
+.card:hover::after,.stat:hover::after,.box:hover::after{opacity:1}.card:hover{box-shadow:0 22px 50px -24px var(--b)}
+.stat b{background:linear-gradient(135deg,#fff,var(--b));-webkit-background-clip:text;color:transparent;font-size:34px}.stat.od b{background:none;color:var(--no)}
+.acts{flex-wrap:wrap}.board{display:grid;grid-template-columns:repeat(5,minmax(240px,1fr));gap:12px;overflow-x:auto;align-items:start}.cards.board{display:block}
+.col{background:#0f0f11;border:1px dashed var(--line);border-radius:18px;padding:10px;display:flex;flex-direction:column;gap:10px;min-height:140px}.col h4{display:flex;align-items:center;gap:7px;margin:4px}.col h4 span{margin-left:auto}.col h4 u{width:8px;height:8px;border-radius:50%}
+.col .card{padding:12px;cursor:grab}.col .d,.col .tags{display:none}
+.in{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;outline:0;color:var(--tx);font:inherit}.in:focus{border-color:var(--b)}.tool .in{min-width:160px}#tn{flex:1}
+.sck{display:flex;align-items:center;gap:12px;min-height:42px;width:100%;background:none;border:0;color:var(--tx);font:inherit;text-align:left;cursor:pointer;padding:0;outline:0}
+.sbx{position:relative;flex:none;width:24px;height:24px;border-radius:8px;overflow:hidden;display:grid;place-items:center;transition:transform .16s}.sbx::before{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 2px #ffffff40}
+.sbx i{position:absolute;inset:0;background:var(--b);transform:scale(0);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.sbx svg{position:relative;width:70%;height:70%;fill:none;stroke:#0b0b0c;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .3s .08s}
+.sck:active .sbx{transform:scale(.92)}.sck:focus-visible .sbx{outline:2px solid var(--b);outline-offset:3px}.slb{position:relative}.swd{transition:opacity .3s}
+.srl{position:absolute;left:0;right:0;top:52%;height:1.5px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .35s .1s}
+.sck[aria-checked=true] i{transform:scale(1)}.sck[aria-checked=true] svg{stroke-dashoffset:0}.sck[aria-checked=true] .swd{opacity:.42}.sck[aria-checked=true] .srl{transform:scaleX(1)}
+.trow{display:flex;align-items:center;border-top:1px solid var(--line)}.trow:first-child{border-top:0}.tl{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:12px;padding:0 12px}.tl:empty::after{content:"No tasks yet";display:block;padding:12px 0;color:var(--mu)}
+.box .trow{padding:0}
+.mu{color:var(--mu)}h2 small{font-size:13px;font-weight:400;margin-left:8px}.stat,.box{animation:in .35s both}
+.card[style*="--sc"]::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--sc);opacity:.85}.card .bar i{background:var(--sc,var(--b))}
+.tc{font-style:normal;font-size:11px;padding:1px 8px;border-radius:20px;background:#26262b;color:var(--mu);margin-left:6px;white-space:nowrap}.slb+.tc{margin-left:auto}.tc.late{color:#fff;background:#ff5a5f55}
+.pi{padding:10px 14px;cursor:pointer;border-top:1px solid var(--line)}.pi:first-child{border-top:0}.pi.on,.pi:hover{background:#7cc4ff14;color:var(--b)}
+.donut{width:140px;height:140px;border-radius:50%;display:grid;place-items:center;margin:auto}.donut span{width:90px;height:90px;border-radius:50%;background:#151517;display:grid;place-items:center;font-size:26px;font-weight:700}
+.spark{display:flex;align-items:flex-end;gap:4px;height:100px}.spark i{flex:1;border-radius:4px 4px 0 0;min-height:4px;transition:.3s}
+.ab{display:grid;grid-template-columns:90px 1fr 30px;gap:8px;align-items:center;margin:8px 0;font-size:12px}.ab span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ab em{font-style:normal;color:var(--mu);text-align:right}
+main{padding-bottom:100px}code{background:#26262b;padding:1px 6px;border-radius:6px;font-size:12px;word-break:break-all}
+#spb{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:30;width:min(640px,calc(100% - 24px));display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:18px;background:#121214e6;backdrop-filter:blur(16px);border:1px solid var(--line);box-shadow:0 14px 40px #000a}
+#spb img{width:42px;height:42px;border-radius:9px}.spi{display:flex;flex-direction:column;min-width:0;flex:1}.spi b,.spi span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.spi span{font-size:12px;color:var(--mu)}
+.spbar{position:absolute;left:12px;right:12px;bottom:0;height:2px;background:#26262b;border-radius:2px;overflow:hidden}.spbar i{display:block;height:100%;background:#1ed760}#spb .mu{flex:1}
+</style></head><body>
+<div id="login"><div><img src="https://plain-apac-prod-public.komododecks.com/202610/23/dTuqfxS9sO9h52Vv2yvY/image.png" alt="">
+<h1>CodeHUB</h1><p>by Namith · enter your PIN</p><div id="cs"></div><div id="lmsg"></div><div id="sc" class="hide"></div></div></div>
+<div id="app" class="hide">
+<header><div class="logo"><img src="https://plain-apac-prod-public.komododecks.com/202610/23/dTuqfxS9sO9h52Vv2yvY/image.png" alt=""><div>CodeHUB<br><small>by Namith</small></div></div>
+<nav><button data-t="dash" class="on">Dashboard</button><button data-t="proj">Projects</button><button data-t="task">Tasks</button><button data-t="note">Notes</button><button data-t="stat">Analytics</button></nav><div class="sp"></div>
+<button class="btn pri" id="add"></button><button class="btn" id="pal" title="Ctrl+K">⌕ Search</button><span id="ac"></span><button class="btn" id="exp" title="Export backup">⭳ Export</button><button class="btn" id="imp" title="Import backup">⭱ Import</button><button class="btn" id="lock"></button></header>
+<main id="main"></main><div id="spb"></div></div><div id="toast"></div>
+<script>
+const $=(s,e=document)=>e.querySelector(s),$$=(s,e=document)=>[...e.querySelectorAll(s)];
+const PIN='2010',I={};
+[['folder','<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'],['edit','<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>'],['trash','<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>'],['pin','<path d="M12 17v5M9 3h6l-1 7 3 3H7l3-3z"/>'],['copy','<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>'],['plus','<path d="M12 5v14M5 12h14"/>'],['lock','<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>'],['rc','<path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/>'],['arr','<path d="M5 12h14M13 6l6 6-6 6"/>'],['chk','<path d="M5 12l5 5 9-10"/>'],['spin','<path d="M12 3a9 9 0 0 1 9 9"/>'],['grid','<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>'],['list','<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>']].forEach(([k,v])=>I[k]=`<svg viewBox="0 0 24 24">${v}</svg>`);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
+const fmt=d=>d?new Date(d.length==10?d+'T00:00':d).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):'—';
+const rel=t=>{const m=(Date.now()-t)/6e4;return m<1?'just now':m<60?Math.floor(m)+'m ago':m<1440?Math.floor(m/60)+'h ago':m<43200?Math.floor(m/1440)+'d ago':fmt(new Date(t).toISOString())};
+const toast=m=>{const d=document.createElement('div');d.textContent=m;$('#toast').append(d);setTimeout(()=>d.remove(),4500)};
+const ST=['Planning','Active','On Hold','Completed','Archived'],PR=['High','Medium','Low'],COL={Planning:'#c4b5ff',Active:'#7cc4ff','On Hold':'#ffc46b',Completed:'#5ee0a0',Archived:'#555b66'};
+const ld=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return Array.isArray(v)?v:d}catch{return d}};
+const norm=p=>Object.assign({desc:'',status:'Planning',priority:'Medium',progress:0,deadline:'',notes:'',path:'',created:Date.now(),updated:Date.now()},p,{id:p.id||uid(),name:String(p.name||'Untitled'),techs:Array.isArray(p.techs)?p.techs:[],tags:Array.isArray(p.tags)?p.tags:[],tasks:(Array.isArray(p.tasks)?p.tasks:[]).filter(t=>t&&t.t).map(t=>({id:t.id||uid(),t:String(t.t),d:!!t.d})),progress:Math.min(100,Math.max(0,+p.progress||0)),status:ST.includes(p.status)?p.status:'Planning',priority:PR.includes(p.priority)?p.priority:'Medium'});
+let P=ld('codehub.p',[]).filter(x=>x&&typeof x=='object').map(norm),V={tab:'dash',layout:'grid',q:'',st:'All',pr:'All',sort:'updated'};
+let INBOX={id:'inbox',name:'Inbox (no project)',tasks:ld('codehub.i',[]).filter(t=>t&&t.t)};
+const PX=id=>id=='inbox'?INBOX:P.find(q=>q.id==id),td=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){toast('Browser storage blocked ('+e.name+') — changes last only until you close this tab.')}};
+const save=()=>{store('codehub.p',P);store('codehub.i',INBOX.tasks)};
+let N=ld('codehub.n',[]).filter(x=>x&&x.id);const saveN=()=>store('codehub.n',N);
+const tk=p=>p.tasks||(p.tasks=[]),tcount=p=>{const a=tk(p);return a.filter(t=>t.d).length+'/'+a.length+' tasks'};
+const tmeta=()=>$$('[data-tm]').forEach(el=>{const p=PX(el.dataset.tm);if(p)el.textContent=tcount(p)});
+const chk=(t,pid)=>`<div class="trow"><button class="sck" role="checkbox" aria-checked="${!!t.d}" data-pid="${pid}" data-tid="${t.id}"><span class="sbx"><i></i><svg viewBox="0 0 24 24"><path pathLength="1" d="M5 12l5 5 9-10"/></svg></span><span class="slb"><span class="swd">${esc(t.t)}</span><span class="srl"></span></span>${t.pr&&t.pr!='Medium'?`<em class="tc pr-${t.pr}">${t.pr}</em>`:''}${t.due?`<em class="tc ${!t.d&&t.due<td()?'late':''}">${fmt(t.due)}</em>`:''}</button><button class="ic" data-x="${t.id}" data-pid="${pid}" title="Delete task">✕</button></div>`;
+document.addEventListener('click',e=>{const c=e.target.closest('.sck'),x=e.target.closest('[data-x]');
+ if(c){const p=PX(c.dataset.pid),t=p&&tk(p).find(q=>q.id==c.dataset.tid);if(!t)return;t.d=!t.d;t.at=t.d?Date.now():0;p.updated=Date.now();save();c.setAttribute('aria-checked',t.d);tmeta()}
+ else if(x){const p=PX(x.dataset.pid);if(!p)return;p.tasks=tk(p).filter(q=>q.id!=x.dataset.x);save();x.closest('.trow').remove();tmeta()}});
+window.addEventListener('error',e=>toast('Error: '+e.message));
+document.addEventListener('keydown',e=>{if(e.key=='Escape'){const o=$$('.ov').pop();o&&o.remove()}});
+/* IndexedDB for folder handles */
+const dbp=new Promise(r=>{try{const q=indexedDB.open('codehub',1);q.onupgradeneeded=()=>q.result.createObjectStore('h');q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)}catch{r(null)}});
+const idb=async(m,k,v)=>{const d=await dbp;if(!d)return;return new Promise(r=>{const s=d.transaction('h',m=='get'?'readonly':'readwrite').objectStore('h');const q=m=='get'?s.get(k):m=='put'?s.put(v,k):s.delete(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r()})};
+/* ---- CodeSlots (vanilla port of React Bits CodeSlots) ---- */
+function codeSlots(host,{length,onComplete}){
+ host.innerHTML=`<div class="cs">${'<span class="cslot"><i></i><b></b></span>'.repeat(length)}<input inputmode="numeric" autocomplete="off" maxlength="${length}" aria-label="PIN"></div>`;
+ const row=$('.cs',host),inp=$('input',row),sl=$$('.cslot',row);let v='',lock=false;
+ const draw=()=>sl.forEach((s,i)=>{s.classList.toggle('on',i<v.length);$('b',s).textContent=i<v.length?'•':'';s.classList.toggle('act',i==Math.min(v.length,length-1)&&document.activeElement==inp)});
+ inp.oninput=()=>{if(lock){inp.value=v;return}v=inp.value.replace(/\D/g,'').slice(0,length);inp.value=v;draw();if(v.length==length){lock=true;onComplete(v)}};
+ inp.onfocus=inp.onblur=draw;
+ return{focus:()=>inp.focus(),
+  error(){row.dataset.s='error';[...sl].reverse().forEach((s,k)=>setTimeout(()=>{s.classList.remove('on');$('b',s).textContent=''},250+k*70));
+   setTimeout(()=>{row.dataset.s='';v='';inp.value='';lock=false;draw();inp.focus()},250+length*70+300)},
+  success(){row.dataset.s='success';inp.blur()}}}
+/* ---- SlideCommit (vanilla port of React Bits SlideCommit) ---- */
+function slide(host,{label,doneLabel,onConfirm,onDone,danger}){
+ host.innerHTML=`<div class="sl${danger?' danger':''}"><span class="sll">${label}</span><div class="slh" tabindex="0">${I.arr}</div></div>`;
+ const t=$('.sl',host),h=$('.slh',t),lb=$('.sll',t);const W=280,max=W-52;let x=0,g=null,busy=false;
+ const set=v=>{x=Math.max(0,Math.min(max,v));h.style.transform=`translateX(${x}px)`;lb.style.opacity=Math.max(0,1-x/max*1.6)};
+ const reset=()=>{h.classList.remove('drag');h.style.transition='transform .45s cubic-bezier(.34,1.4,.64,1)';set(0)};
+ const commit=async()=>{busy=true;h.classList.remove('drag');set(max);h.classList.add('spin');h.innerHTML=I.spin;const t0=Date.now();
+  try{await onConfirm();await new Promise(r=>setTimeout(r,Math.max(0,350-(Date.now()-t0))));
+   h.classList.remove('spin');h.classList.add('done');h.style.transition='width .4s cubic-bezier(.23,1,.32,1),transform .4s,background .2s';h.style.width=(W-8)+'px';h.style.transform='translateX(0)';h.innerHTML=I.chk+' '+doneLabel;setTimeout(()=>onDone&&onDone(),800)}
+  catch(e){h.classList.remove('spin');h.classList.add('err');h.innerHTML=I.arr;toast(e&&e.message||'Failed');setTimeout(()=>{h.classList.remove('err');busy=false;reset()},600)}};
+ h.onpointerdown=e=>{if(busy)return;g=e.clientX-x;h.setPointerCapture(e.pointerId);h.classList.add('drag')};
+ h.onpointermove=e=>{if(g!==null&&!busy)set(e.clientX-g)};
+ h.onpointerup=h.onpointercancel=()=>{if(g===null)return;g=null;x>=max-4?commit():reset()};
+ h.onkeydown=e=>{if(busy)return;if(e.key=='Enter'||e.key=='End'){e.preventDefault();set(max);commit()}else if(e.key=='ArrowRight')set(x+max/10);else if(e.key=='ArrowLeft')set(x-max/10);if(x>=max&&!busy)commit()}}
+/* ---- Login ---- */
+const enter=()=>{sessionStorage.setItem('codehub.ok','1');$('#login').classList.add('hide');$('#app').classList.remove('hide');$('#add').innerHTML=I.plus+' Add Project';$('#lock').innerHTML=I.lock;render();spDraw(null);spInit()};
+if(!sessionStorage.getItem('codehub.ok')){
+ const cs=codeSlots($('#cs'),{length:4,onComplete(c){if(c==PIN){cs.success();$('#lmsg').textContent='PIN accepted — slide to unlock';$('#sc').classList.remove('hide');slide($('#sc'),{label:'Slide to unlock',doneLabel:'Welcome',onConfirm:()=>new Promise(r=>setTimeout(r,500)),onDone:enter})}else{$('#lmsg').style.color='var(--no)';$('#lmsg').textContent='Incorrect PIN';cs.error();setTimeout(()=>{$('#lmsg').textContent='';$('#lmsg').style.color=''},1200)}}});cs.focus();document.addEventListener('click',()=>{if(!$('#sc').children.length)cs.focus()})}
+$('#lock').onclick=()=>{sessionStorage.removeItem('codehub.ok');location.reload()};
+$$('nav button').forEach(b=>b.onclick=()=>{V.tab=b.dataset.t;$$('nav button').forEach(x=>x.classList.toggle('on',x==b));render()});
+$('#add').onclick=()=>form();
+const AC=['#7cc4ff','#a78bfa','#5ee0a0','#ffc46b','#ff8fab'],setAc=c=>{document.documentElement.style.setProperty('--b',c);localStorage.setItem('codehub.ac',c)};
+$('#ac').innerHTML=AC.map(c=>`<button class="sw" style="background:${c}" data-c="${c}" title="Accent"></button>`).join('');$('#ac').onclick=e=>e.target.dataset.c&&setAc(e.target.dataset.c);setAc(localStorage.getItem('codehub.ac')||AC[0]);
+$('#exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({app:'codehub',projects:P,notes:N},null,1)],{type:'application/json'}));a.download='codehub-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('Backup exported (records only; reconnect folders after import).')};
+$('#imp').onclick=()=>{const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=async()=>{try{const d=JSON.parse(await i.files[0].text()),ids=new Set(P.map(p=>p.id));const n=(d.projects||[]).filter(p=>p&&p.id&&p.name&&!ids.has(p.id)).map(p=>({desc:'',status:'Planning',priority:'Medium',progress:0,deadline:'',techs:[],tags:[],notes:'',path:'',created:Date.now(),updated:Date.now(),...p}));P=[...n,...P];save();const nid=new Set(N.map(x=>x.id));N=[...(d.notes||[]).filter(x=>x&&x.id&&!nid.has(x.id)),...N];saveN();render();toast(n.length+' project(s) imported')}catch{toast('Invalid backup file')}};i.click()};
+document.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||e.ctrlKey||e.metaKey||$('#app').classList.contains('hide')||$('.ov'))return;if(e.key=='n'){e.preventDefault();form()}else if(e.key=='t'){e.preventDefault();go('task');$('#tn')&&$('#tn').focus()}else if(e.key=='/'){e.preventDefault();V.tab='proj';$$('nav button').forEach(x=>x.classList.toggle('on',x.dataset.t=='proj'));render();$('#q').focus()}});
+document.addEventListener('mousemove',e=>{const c=e.target.closest&&e.target.closest('.card,.stat,.box');if(c){const r=c.getBoundingClientRect();c.style.setProperty('--mx',e.clientX-r.left+'px');c.style.setProperty('--my',e.clientY-r.top+'px')}});
+const mn=$('#main');mn.addEventListener('dragstart',e=>{const c=e.target.closest('.card');if(c)e.dataTransfer.setData('t',c.dataset.id)});mn.addEventListener('dragover',e=>{if(e.target.closest('.col'))e.preventDefault()});
+mn.addEventListener('drop',e=>{const c=e.target.closest('.col');if(!c)return;e.preventDefault();const p=P.find(x=>x.id==e.dataTransfer.getData('t'));if(p&&p.status!=c.dataset.s){p.status=c.dataset.s;p.updated=Date.now();if(p.status=='Completed')p.progress=100;save();render();toast('Moved to '+p.status)}});
+/* ---- Derived data ---- */
+const overdue=p=>p.deadline&&new Date(p.deadline+'T23:59:59')<new Date()&&!['Completed','Archived'].includes(p.status);
+const li=p=>`<div class="li" data-id="${p.id}" data-a="edit"><b>${esc(p.name)}</b><span>`;
+/* ---- Dashboard ---- */
+function dash(){
+ const c=s=>P.filter(p=>p.status==s).length,od=P.filter(overdue).length,avg=P.length?Math.round(P.reduce((a,p)=>a+(+p.progress||0),0)/P.length):0;
+ const S=[['Total projects',P.length],['Active',c('Active')],['Completed',c('Completed')],['On hold',c('On Hold')],['Overdue',od,'od'],['Open tasks',[INBOX,...P].reduce((a,p)=>a+tk(p).filter(t=>!t.d).length,0)]];
+ const up=P.filter(p=>p.deadline&&!['Completed','Archived'].includes(p.status)).sort((a,b)=>a.deadline.localeCompare(b.deadline)).slice(0,5);
+ const ro=P.filter(p=>p.opened).sort((a,b)=>b.opened-a.opened).slice(0,5),ru=[...P].sort((a,b)=>b.updated-a.updated).slice(0,5);
+ const list=(a,f)=>a.length?a.map(f).join(''):'<div class="none">Nothing here yet.</div>';
+ const g=new Date().getHours(),greet=g<12?'Good morning':g<18?'Good afternoon':'Good evening',tc={};P.forEach(p=>p.techs.forEach(t=>tc[t]=(tc[t]||0)+1));const tt=Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,6),pc=PR.map(x=>[x,P.filter(p=>p.priority==x&&!['Completed','Archived'].includes(p.status)).length]);
+ return`<h2>${greet}, Namith 👋</h2><div class="stats">${S.map(([l,n,k])=>`<div class="stat ${k||''}"><b>${n}</b><span>${l}</span></div>`).join('')}</div>
+ <div class="grid2"><div class="box"><h4>Overall completion</h4><b style="font-size:28px;color:var(--b)">${avg}%</b><div class="bar" style="margin-top:10px"><i style="width:${avg}%"></i></div></div>
+ <div class="box"><h4>Status distribution</h4><div class="dist">${P.length?ST.map(s=>c(s)?`<i style="flex:${c(s)};background:${COL[s]}"></i>`:'').join(''):'<i style="flex:1;background:#26262b"></i>'}</div><div class="leg">${ST.map(s=>`<span><u style="background:${COL[s]}"></u>${s} ${c(s)}</span>`).join('')}</div></div></div>
+ <div class="grid2"><div class="box"><h4>Upcoming deadlines</h4>${list(up,p=>li(p)+`${overdue(p)?'⚠ ':''}${fmt(p.deadline)}</span></div>`)}</div>
+ <div class="box"><h4>Recently opened</h4>${list(ro,p=>li(p)+rel(p.opened)+'</span></div>')}</div>
+ <div class="box"><h4>Recently updated</h4>${list(ru,p=>li(p)+rel(p.updated)+'</span></div>')}</div></div>
+ <div class="grid2"><div class="box"><h4>Focus: open tasks</h4>${list([INBOX,...P].flatMap(p=>tk(p).filter(t=>!t.d).map(t=>({p,t}))).slice(0,6),x=>`<div class="li" data-id="${x.p.id}" data-a="view"><b>${esc(x.t.t)}</b><span>${esc(x.p.name)}</span></div>`)}</div><div class="box"><h4>Top technologies</h4>${tt.length?tt.map(([t,n])=>`<div class="li"><b>${esc(t)}</b><span>${n} project${n>1?'s':''}</span></div>`).join(''):'<div class="none">Add technologies to projects.</div>'}</div>
+ <div class="box"><h4>Focus timer</h4><div id="ft" style="font-size:34px;font-weight:700;color:var(--b)">${tfmt()}</div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn pri" id="fts">${FT.on?'Pause':'Start'}</button><button class="btn" id="ftr">Reset</button></div><div class="mu" style="margin-top:6px;font-size:12px">${FT.done} session(s) today</div></div><div class="box"><h4>Open work by priority</h4>${pc.map(([x,n])=>`<div class="li"><b class="pr-${x}">${x}</b><span>${n}</span></div>`).join('')}</div></div>`}
+/* ---- Projects ---- */
+const card=p=>`<article class="card" draggable="true" data-id="${p.id}" style="--sc:${COL[p.status]}"><div class="ch"><div><h3 data-a="view" style="cursor:pointer">${esc(p.name)}</h3><span class="pill s-${p.status.replace(' ','')}">${p.status}</span><span class="pill pr-${p.priority}">${p.priority}</span>${overdue(p)?'<span class="pill od">Overdue</span>':''}</div><button class="ic ${p.pinned?'pinned':''}" data-a="pin" title="Pin">${I.pin}</button></div>
+<p class="d">${esc(p.desc)||'No description'}</p>
+<div><div class="bar"><i style="width:${p.progress}%"></i></div><div class="meta" style="margin-top:4px"><span>${p.progress}%</span><span>Due ${fmt(p.deadline)}${p.deadline?' · '+dl(p.deadline):''}</span></div></div>
+<div class="tags">${p.techs.map(t=>`<em class="t">${esc(t)}</em>`).join('')}${p.tags.map(t=>`<em>#${esc(t)}</em>`).join('')}</div>
+<div><div class="fs"><span>${I.folder} ${p.folderName?esc(p.folderName):'No folder linked'}</span><b data-fs="${p.id}">${p.folderName?'checking…':'Not connected'}</b></div><div class="meta" style="margin-top:2px"><span>Opened ${p.opened?rel(p.opened):'never'}</span><span data-tm="${p.id}">${tcount(p)}</span></div></div>
+<div class="acts"><button class="btn pri" data-a="open">${I.folder} Open Folder</button>${p.path?`<a class="ic" href="vscode://file/${encodeURI(p.path.replace(/\\/g,'/'))}" title="Open in VS Code">⌨</a>`:''}${p.repo?`<a class="ic" href="${esc(p.repo)}" target="_blank" rel="noopener" title="Repository">↗</a>`:''}${p.folderName?`<button class="ic" data-a="rc" title="Reconnect folder">${I.rc}</button>`:''}<button class="ic" data-a="view" title="Tasks &amp; notes">☑</button><button class="ic" data-a="edit" title="Edit">${I.edit}</button><button class="ic" data-a="dup" title="Duplicate record">${I.copy}</button><button class="ic" data-a="del" title="Delete">${I.trash}</button></div></article>`;
+function projects(){
+ let a=P.filter(p=>(V.st=='All'||p.status==V.st)&&(V.pr=='All'||p.priority==V.pr)&&(!V.q||[p.name,p.desc,p.notes,...p.techs,...p.tags].join(' ').toLowerCase().includes(V.q.toLowerCase())));
+ const k={name:(x,y)=>x.name.localeCompare(y.name),created:(x,y)=>y.created-x.created,opened:(x,y)=>(y.opened||0)-(x.opened||0),deadline:(x,y)=>(x.deadline||'9').localeCompare(y.deadline||'9'),status:(x,y)=>ST.indexOf(x.status)-ST.indexOf(y.status),updated:(x,y)=>y.updated-x.updated}[V.sort];
+ a.sort((x,y)=>(y.pinned?1:0)-(x.pinned?1:0)||k(x,y));
+ const o=(arr,v)=>arr.map(x=>`<option ${x==v?'selected':''}>${x}</option>`).join('');
+ return`<h2>Projects</h2><div class="tool"><input id="q" placeholder="Search name, tech, tags, notes…" value="${esc(V.q)}">
+ <select id="fst">${o(['All',...ST],V.st)}</select><select id="fpr">${o(['All',...PR],V.pr)}</select>
+ <select id="fso">${[['updated','Last updated'],['name','Name'],['created','Created'],['opened','Last opened'],['deadline','Deadline'],['status','Status']].map(([v,l])=>`<option value="${v}" ${v==V.sort?'selected':''}>${l}</option>`).join('')}</select>
+ <button class="btn" data-a="lay">View: ${V.layout}</button></div>
+ <div class="cards ${V.layout}">${V.layout=='board'?board(a):a.length?a.map(card).join(''):'<div class="none">No projects match. Click “Add Project” to create one.</div>'}</div>`}
+function render(){const m=$('#main');m.innerHTML={dash,proj:projects,task:tasksView,note:notesView,stat:analytics}[V.tab]();if(V.tab=='proj'){const q=$('#q');q.oninput=()=>{V.q=q.value;const p=q.selectionStart;render();const n=$('#q');n.focus();n.setSelectionRange(p,p)};
+ $('#fst').onchange=e=>{V.st=e.target.value;render()};$('#fpr').onchange=e=>{V.pr=e.target.value;render()};$('#fso').onchange=e=>{V.sort=e.target.value;render()}}wireX();refreshFolders()}
+async function refreshFolders(){for(const el of $$('[data-fs]')){const h=await idb('get',el.dataset.fs);let t='Reconnect needed',c='wn';if(h&&h.snapshot){t='Snapshot';c='wn'}else if(h){try{const p=await h.queryPermission({mode:'read'});if(p=='granted'){t='Connected';c='ok'}else t='Permission needed'}catch{}}el.textContent=t;el.className=c}}
+/* ---- Actions ---- */
+$('#main').addEventListener('click',e=>{const nb=e.target.closest('[data-n]');if(nb)return noteAct(nb);const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,id=(b.closest('[data-id]')||{dataset:{}}).dataset.id,p=P.find(x=>x.id==id);
+ if(a=='lay'){V.layout={grid:'list',list:'board',board:'grid'}[V.layout];return render()}
+ if(!p)return;
+ if(a=='pin'){p.pinned=!p.pinned;save();render()}
+ else if(a=='edit')form(p);
+ else if(a=='del')confirmDel(p);
+ else if(a=='open')openFolder(p);
+ else if(a=='rc')reconnect(p);
+ else if(a=='dup')dup(p);else if(a=='view')details(p)});
+async function dup(p){const n={...p,id:uid(),name:p.name+' (copy)',created:Date.now(),updated:Date.now(),opened:null,pinned:false,techs:[...p.techs],tags:[...p.tags],tasks:tk(p).map(t=>({...t,id:uid()}))};const h=await idb('get',p.id);if(h)await idb('put',n.id,h);P.unshift(n);save();render();toast('Record duplicated — the folder itself was not copied.')}
+function modal(html){const o=document.createElement('div');o.className='ov';o.innerHTML=`<div class="md">${html}</div>`;o.onmousedown=e=>{if(e.target==o)o.remove()};document.body.append(o);return o}
+function confirmDel(p){const o=modal(`<h2>Delete “${esc(p.name)}”?</h2><p class="d" style="margin-bottom:16px">This removes only the record from CodeHUB. Your actual folder is never touched.</p><div id="sd"></div><div class="ft"><button class="btn" id="cx">Cancel</button></div>`);$('#cx',o).onclick=()=>o.remove();
+ slide($('#sd',o),{label:'Slide to delete',doneLabel:'Deleted',danger:1,onConfirm:async()=>{P=P.filter(x=>x.id!=p.id);save();await idb('del',p.id)},onDone:()=>{o.remove();render()}})}
+const FSA=()=>typeof window.showDirectoryPicker==='function';
+function snapPick(){return new Promise(res=>{const i=document.createElement('input');i.type='file';i.webkitdirectory=true;i.onchange=()=>{const f=[...i.files].filter(x=>!/(^|\/)(node_modules|\.git)\//.test(x.webkitRelativePath));if(!f.length)return res(null);res({snapshot:true,name:f[0].webkitRelativePath.split('/')[0],files:f.slice(0,8000).map(x=>({p:x.webkitRelativePath,s:x.size}))})};i.oncancel=()=>res(null);i.click()})}
+async function pick(){
+ if(FSA()){try{return await showDirectoryPicker({mode:'readwrite',id:'codehub'})}catch(e){if(e.name=='AbortError')return null;toast('Native picker blocked ('+e.name+') — using snapshot mode.')}}
+ else toast('Live folder access is unavailable in this browser (Brave: enable brave://flags/#file-system-access-api, or use Chrome/Edge). Using snapshot mode.');
+ return snapPick()}
+async function reconnect(p){const h=await pick();if(!h)return;await idb('put',p.id,h);p.folderName=h.name;p.updated=Date.now();save();render();toast('Folder reconnected: '+h.name)}
+async function openFolder(p){let h=await idb('get',p.id);
+ if(!h){toast('No folder handle saved — choose the folder again.');return reconnect(p)}
+ if(h.snapshot){p.opened=Date.now();save();render();return browseSnap(p,h,'')}
+ try{let s=await h.queryPermission({mode:'read'});if(s!='granted')s=await h.requestPermission({mode:'read'});if(s!='granted'){toast('Permission was not granted. Use Reconnect Folder.');return refreshFolders()}}
+ catch{toast('Saved folder is unavailable. Use Reconnect Folder.');return reconnect(p)}
+ p.opened=Date.now();save();browse(p,h,[h]);render()}
+async function browse(p,_,trail,o){const cur=trail[trail.length-1];let rows=[];
+ try{for await(const [n,en] of cur.entries())rows.push({n,k:en.kind,en})}catch{toast('Could not read folder. Use Reconnect Folder.');return}
+ rows.sort((a,b)=>(a.k==b.k?a.n.localeCompare(b.n):a.k=='directory'?-1:1));
+ const html=`<h2>${I.folder} ${esc(trail.map(t=>t.name).join(' / '))}</h2>
+ <div class="note"><b>Heads-up:</b> browsers cannot launch Windows File Explorer. Files were read with the File System Access API instead.${p.path?` To open it in Explorer, copy the path and paste it into the Explorer address bar (Win+E).`:` Add a folder path in Edit to enable “Copy path”.`}</div>
+ <div class="fl">${trail.length>1?'<div class="dir" data-up="1">⬑ ..</div>':''}${rows.map((r,i)=>`<div class="${r.k=='directory'?'dir':''}" data-i="${i}"><span>${r.k=='directory'?'📁':'📄'} ${esc(r.n)}</span></div>`).join('')||'<div>Empty folder</div>'}</div>
+ <div class="ft">${p.path?'<button class="btn" id="cp">Copy path</button>':''}<button class="btn pri" id="cl">Close</button></div>`;
+ if(o)$('.md',o).innerHTML=html;else o=modal(html);
+ $('#cl',o).onclick=()=>o.remove();if(p.path)$('#cp',o).onclick=()=>navigator.clipboard.writeText(p.path).then(()=>toast('Path copied'));
+ $$('.dir',o).forEach(d=>d.onclick=()=>{if(d.dataset.up)browse(p,0,trail.slice(0,-1),o);else{const r=rows[+d.dataset.i];browse(p,0,[...trail,r.en],o)}})}
+function browseSnap(p,h,sub,o){const base=h.name+'/'+sub,dirs=new Set(),fl=[];
+ h.files.forEach(f=>{if(!f.p.startsWith(base))return;const r=f.p.slice(base.length),i=r.indexOf('/');i<0?fl.push({n:r,s:f.s}):dirs.add(r.slice(0,i))});
+ const html=`<h2>${I.folder} ${esc(base)}</h2><div class="note"><b>Snapshot mode:</b> this browser can't keep live folder access, so CodeHUB saved a read-only list of ${h.files.length} files (node_modules and .git skipped) from when you chose the folder. Use Reconnect to refresh. Chrome/Edge give live access. It also can't launch Explorer${p.path?' — use Copy path':''}.</div>
+ <div class="fl">${sub?'<div class="dir" data-up="1">⬑ ..</div>':''}${[...dirs].sort().map(d=>`<div class="dir" data-d="${esc(d)}"><span>📁 ${esc(d)}</span></div>`).join('')}${fl.sort((a,b)=>a.n.localeCompare(b.n)).map(f=>`<div><span>📄 ${esc(f.n)}</span><span>${(f.s/1024).toFixed(1)} KB</span></div>`).join('')||''}</div>
+ <div class="ft">${p.path?'<button class="btn" id="cp">Copy path</button>':''}<button class="btn pri" id="cl">Close</button></div>`;
+ if(o)$('.md',o).innerHTML=html;else o=modal(html);
+ $('#cl',o).onclick=()=>o.remove();if(p.path)$('#cp',o).onclick=()=>navigator.clipboard.writeText(p.path).then(()=>toast('Path copied'));
+ $$('.dir',o).forEach(d=>d.onclick=()=>browseSnap(p,h,d.dataset.up?sub.replace(/[^/]+\/$/,''):sub+d.dataset.d+'/',o))}
+const board=a=>`<div class="board">${ST.map(s=>{const c=a.filter(p=>p.status==s);return`<div class="col" data-s="${s}"><h4><u style="background:${COL[s]}"></u>${s} <span>${c.length}</span></h4>${c.map(card).join('')||'<div class="none">Drop here</div>'}</div>`}).join('')}</div>`;
+function details(p){const a=tk(p);const o=modal(`<h2>${esc(p.name)}</h2><div class="meta" style="margin-bottom:12px"><span class="pill s-${p.status.replace(' ','')}">${p.status}</span><span data-tm="${p.id}">${tcount(p)}</span></div>
+<h4>Tasks</h4><div class="tl" id="tl">${a.map(t=>chk(t,p.id)).join('')}</div>
+<div style="display:flex;gap:8px;margin:10px 0"><input class="in" id="nt" style="flex:1" placeholder="Add a task and press Enter"><button class="btn" id="ta">${I.plus}</button></div>
+<div style="display:flex;gap:8px;margin-bottom:18px"><button class="btn" id="sy">Sync progress from tasks</button><button class="btn" id="cc">Clear completed</button></div>
+<h4>Notes <span id="sv2" style="float:right;text-transform:none;color:var(--ok)"></span></h4><textarea class="in" id="pn" style="width:100%;min-height:140px">${esc(p.notes)}</textarea><div class="ft"><button class="btn pri" id="cl">Done</button></div>`);
+ const add=()=>{const v=$('#nt',o).value.trim();if(!v)return;const t={id:uid(),t:v,d:false};tk(p).push(t);p.updated=Date.now();save();$('#tl',o).insertAdjacentHTML('beforeend',chk(t,p.id));$('#nt',o).value='';tmeta()};
+ $('#ta',o).onclick=add;$('#nt',o).onkeydown=e=>{if(e.key=='Enter')add()};
+ $('#sy',o).onclick=()=>{const a=tk(p);if(!a.length)return toast('Add tasks first');p.progress=Math.round(a.filter(t=>t.d).length/a.length*100);p.updated=Date.now();save();render();toast('Progress set to '+p.progress+'%')};
+ $('#cc',o).onclick=()=>{p.tasks=tk(p).filter(t=>!t.d);save();$('#tl',o).innerHTML=p.tasks.map(t=>chk(t,p.id)).join('');tmeta()};
+ let tm;$('#pn',o).oninput=e=>{clearTimeout(tm);tm=setTimeout(()=>{p.notes=e.target.value;p.updated=Date.now();save();$('#sv2',o).textContent='Saved ✓'},400)};
+ $('#cl',o).onclick=()=>{o.remove();render()}}
+function tasksView(){const open=V.tf!='all',t0=td(),all=[INBOX,...P],R={High:0,Medium:1,Low:2};
+ const cnt=all.flatMap(p=>tk(p)).filter(t=>!t.d),late=cnt.filter(t=>t.due&&t.due<t0).length;
+ const gs=all.map(p=>{const a=tk(p).filter(t=>!open||!t.d).sort((x,y)=>(+!!x.d)-(+!!y.d)||(x.due||'9').localeCompare(y.due||'9')||R[x.pr||'Medium']-R[y.pr||'Medium']);return a.length?`<div class="box" style="margin-bottom:12px"><h4>${esc(p.name)} <span data-tm="${p.id}" style="float:right;text-transform:none">${tcount(p)}</span></h4>${a.map(t=>chk(t,p.id)).join('')}</div>`:''}).join('');
+ return`<h2>Tasks <small class="mu">${cnt.length} open · ${late} overdue</small></h2><div class="tool"><select class="in" id="tp"><option value="inbox">Inbox (no project)</option>${P.map(p=>`<option value="${p.id}" ${p.id==V.tp?'selected':''}>${esc(p.name)}</option>`).join('')}</select><input class="in" id="tn" placeholder="New task… (Enter)"><input class="in" type="date" id="td"><select class="in" id="tpr"><option>Medium</option><option>High</option><option>Low</option></select><button class="btn pri" id="tadd">${I.plus} Add</button><button class="btn" id="tflt">${open?'Showing open':'Showing all'}</button></div>${gs||'<div class="none">🎉 Nothing here. Add your first task above.</div>'}`}
+const dl=d=>{const n=Math.ceil((new Date(d+'T23:59:59')-Date.now())/864e5);return n<0?-n+'d late':n==0?'today':n+'d left'};
+const bars=(rows,max)=>{const m=max||Math.max(1,...rows.map(r=>r[1]));return rows.length?rows.map(([l,n,c])=>`<div class="ab"><span title="${esc(l)}">${esc(l)}</span><div class="bar"><i style="width:${n/m*100}%${c?`;background:${c}`:''}"></i></div><em>${n}</em></div>`).join(''):'<div class="none">No data yet.</div>'};
+const riskOf=()=>P.filter(p=>!['Completed','Archived'].includes(p.status)&&p.deadline&&(overdue(p)||(new Date(p.deadline+'T23:59:59')-Date.now()<7*864e5&&p.progress<60)));
+function analytics(){const all=[...P,INBOX].flatMap(p=>tk(p)),dd=all.filter(t=>t.d),R=Math.round;
+ const days=[...Array(14)].map((_,i)=>new Date(Date.now()-(13-i)*864e5).toDateString());
+ const cd=days.map(x=>dd.filter(t=>t.at&&new Date(t.at).toDateString()==x).length),ud=days.map(x=>P.filter(p=>new Date(p.updated).toDateString()==x).length),mx=Math.max(1,...cd,...ud);
+ const spark=(a,c)=>`<div class="spark">${a.map((n,i)=>`<i title="${days[i]}: ${n}" style="height:${Math.max(4,n/mx*100)}%;background:${c}"></i>`).join('')}</div>`;
+ const pc=P.length?R(P.filter(p=>p.status=='Completed').length/P.length*100):0;let acc=0;
+ const grad=ST.map(s=>{const n=P.filter(p=>p.status==s).length/Math.max(1,P.length)*100,a=acc;acc+=n;return`${COL[s]} ${a}% ${acc}%`}).join(',');
+ const risk=riskOf(),tec={};P.forEach(p=>p.techs.forEach(t=>tec[t]=(tec[t]||0)+1));
+ return`<h2>Analytics <button class="btn" id="rep" style="float:right">Copy report</button></h2><div class="stats"><div class="stat"><b>${pc}%</b><span>Projects completed</span></div><div class="stat"><b>${P.length?R(P.reduce((a,p)=>a+p.progress,0)/P.length):0}%</b><span>Avg progress</span></div><div class="stat"><b>${dd.length}/${all.length}</b><span>Tasks done</span></div><div class="stat od"><b>${risk.length}</b><span>Projects at risk</span></div></div>
+ <div class="grid2"><div class="box"><h4>Status split</h4><div class="donut" style="background:conic-gradient(${P.length?grad:'#26262b 0 100%'})"><span>${P.length}</span></div></div><div class="box"><h4>Tasks completed · 14 days</h4>${spark(cd,'var(--ok)')}</div><div class="box"><h4>Project activity · 14 days</h4>${spark(ud,'var(--b)')}</div></div>
+ <div class="grid2"><div class="box"><h4>Progress by project</h4>${bars(P.slice(0,8).map(p=>[p.name,p.progress,COL[p.status]]),100)}</div><div class="box"><h4>Technologies</h4>${bars(Object.entries(tec).sort((a,b)=>b[1]-a[1]).slice(0,8))}</div><div class="box"><h4>At risk</h4>${risk.length?risk.map(p=>`<div class="li" data-id="${p.id}" data-a="view"><b>${esc(p.name)}</b><span>${overdue(p)?'Overdue':dl(p.deadline)} · ${p.progress}%</span></div>`).join(''):'<div class="none">Nothing at risk 🎉</div>'}</div></div>`}
+document.addEventListener('click',e=>{if(e.target.id=='rep'){const t=[...P,INBOX].flatMap(p=>tk(p));const m=`# CodeHUB report — ${td()}\n- Projects: ${P.length} (${P.filter(p=>p.status=='Active').length} active, ${P.filter(p=>p.status=='Completed').length} completed)\n- Overdue: ${P.filter(overdue).length}, at risk: ${riskOf().length}\n- Tasks: ${t.filter(x=>x.d).length}/${t.length} done\n\n`+P.map(p=>`- ${p.name} — ${p.status}, ${p.progress}%${p.deadline?', due '+p.deadline:''}`).join('\n');navigator.clipboard.writeText(m).then(()=>toast('Report copied'))}});
+/* ---- Spotify (PKCE, no backend) ---- */
+const SP={id:(()=>{try{return localStorage.getItem('codehub.spid')||''}catch{return ''}})()},spTok=()=>{try{return JSON.parse(localStorage.getItem('codehub.sptok'))}catch{return null}},spRed=()=>location.origin+location.pathname;
+const b64=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+async function spLogin(){const v=b64(crypto.getRandomValues(new Uint8Array(32)));sessionStorage.setItem('sp.v',v);const ch=b64(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)));
+ location.href='https://accounts.spotify.com/authorize?'+new URLSearchParams({client_id:SP.id,response_type:'code',redirect_uri:spRed(),scope:'user-read-playback-state user-modify-playback-state user-read-currently-playing',code_challenge_method:'S256',code_challenge:ch})}
+async function spTokenReq(body){const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:SP.id,...body})});if(!r.ok)throw new Error('Spotify sign-in failed — check Client ID and redirect URI');const j=await r.json(),o={a:j.access_token,r:j.refresh_token||(spTok()||{}).r,e:Date.now()+j.expires_in*1000-60000};localStorage.setItem('codehub.sptok',JSON.stringify(o));return o}
+async function spInit(){const c=new URLSearchParams(location.search).get('code');if(c&&sessionStorage.getItem('sp.v')){try{await spTokenReq({grant_type:'authorization_code',code:c,redirect_uri:spRed(),code_verifier:sessionStorage.getItem('sp.v')});toast('Spotify connected 🎧')}catch(e){toast(e.message)}sessionStorage.removeItem('sp.v');history.replaceState({},'',location.pathname)}spDraw(null);if(spTok())spPoll()}
+async function spApi(path,method='GET'){let t=spTok();if(!t)return null;if(Date.now()>t.e){try{t=await spTokenReq({grant_type:'refresh_token',refresh_token:t.r})}catch{localStorage.removeItem('codehub.sptok');return null}}
+ const r=await fetch('https://api.spotify.com/v1/me/player'+path,{method,headers:{Authorization:'Bearer '+t.a}});if(r.status==204)return{};if(r.status==401){localStorage.removeItem('codehub.sptok');return null}
+ if(!r.ok){const j=await r.json().catch(()=>({}));throw new Error((j.error&&j.error.message)||'Spotify error '+r.status)}return method=='GET'?r.json().catch(()=>({})):{}}
+let spT;async function spPoll(){clearTimeout(spT);let d=null;try{d=await spApi('')}catch{}spDraw(d);if(spTok())spT=setTimeout(spPoll,4000)}
+function spDraw(d){const el=$('#spb');if(!el)return;if(!spTok()){el.innerHTML='<span class="mu">♫ Spotify not connected</span><button class="btn" id="spc">Connect</button>';return}
+ if(!d||!d.item){el.innerHTML='<span class="mu">♫ Nothing playing — start Spotify on any device</span><button class="btn" id="spx">Disconnect</button>';return}
+ const i=d.item,img=((i.album||{}).images||[]).slice(-1)[0],pct=Math.min(100,d.progress_ms/i.duration_ms*100);
+ el.innerHTML=`${img?`<img src="${esc(img.url)}" alt="">`:''}<div class="spi"><b>${esc(i.name)}</b><span>${esc((i.artists||[]).map(a=>a.name).join(', '))}</span></div><div class="spbar"><i style="width:${pct}%"></i></div><button class="ic" data-sp="previous" title="Previous">⏮</button><button class="ic" data-sp="${d.is_playing?'pause':'play'}" title="${d.is_playing?'Pause':'Play'}">${d.is_playing?'⏸':'▶'}</button><button class="ic" data-sp="next" title="Next">⏭</button><button class="ic" id="spx" title="Disconnect">✕</button>`}
+function spSetup(){const file=location.protocol=='file:';const o=modal(`<h2>Connect Spotify</h2>${file?`<div class="note"><b>Spotify blocks file:// pages.</b> Serve this folder locally, then open the page from there: <code>python -m http.server 5500 --bind 127.0.0.1</code> → <code>http://127.0.0.1:5500/index.html</code></div>`:''}
+ <ol class="mu" style="padding-left:18px;margin:10px 0;line-height:1.8"><li>Open <b>developer.spotify.com/dashboard</b> → Create app (Web API).</li><li>Add this exact Redirect URI:<br><code id="ru" style="color:var(--b)">${esc(spRed())}</code></li><li>Paste the app's Client ID below.</li></ol>
+ <input class="in" id="cid" style="width:100%" placeholder="Spotify Client ID" value="${esc(SP.id)}"><p class="mu" style="font-size:12px;margin-top:8px">Play/pause/skip need Spotify Premium and an active device. Tokens stay in this browser.</p>
+ <div class="ft"><button class="btn" id="cx">Cancel</button><button class="btn" id="cu">Copy redirect URI</button><button class="btn pri" id="go">Connect</button></div>`);
+ $('#cx',o).onclick=()=>o.remove();$('#cu',o).onclick=()=>navigator.clipboard.writeText(spRed()).then(()=>toast('Redirect URI copied'));
+ $('#go',o).onclick=()=>{const v=$('#cid',o).value.trim();if(!v)return toast('Enter your Client ID');if(file)return toast('Open the app via http://127.0.0.1 first');SP.id=v;try{localStorage.setItem('codehub.spid',v)}catch{}spLogin()}}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-sp]');if(e.target.id=='spc')return spSetup();if(e.target.id=='spx'){localStorage.removeItem('codehub.sptok');clearTimeout(spT);return spDraw(null)}
+ if(b){const a=b.dataset.sp;try{await spApi('/'+a,a=='play'||a=='pause'?'PUT':'POST');setTimeout(spPoll,500)}catch(err){toast(err.message+' (Premium + an active Spotify device required)')}}});
+function notesView(){const a=N.filter(n=>!V.nq||(n.title+n.body).toLowerCase().includes(V.nq.toLowerCase())).sort((x,y)=>(y.pin?1:0)-(x.pin?1:0)||y.updated-x.updated);
+ return`<h2>Notes</h2><div class="tool"><input class="in" id="nq" placeholder="Search notes…" value="${esc(V.nq||'')}"><button class="btn pri" id="nadd">${I.plus} New note</button></div><div class="cards">${a.map(n=>`<article class="card" data-nid="${n.id}"><div class="ch"><h3>${esc(n.title||'Untitled')}</h3><button class="ic ${n.pin?'pinned':''}" data-n="pin">${I.pin}</button></div><p class="d" style="-webkit-line-clamp:6;white-space:pre-wrap">${esc(n.body)}</p><div class="meta"><span>${esc((P.find(p=>p.id==n.pid)||{}).name||'General')}</span><span>${rel(n.updated)}</span></div><div class="acts"><button class="btn" data-n="edit">${I.edit} Edit</button><button class="ic" data-n="del">${I.trash}</button></div></article>`).join('')||'<div class="none">No notes yet. Click “New note”.</div>'}</div>`}
+function wireX(){if(V.tab=='task'){const add=()=>{const v=$('#tn').value.trim(),p=PX($('#tp').value);if(!v)return toast('Type a task first');if(!p)return toast('Pick a project');V.tp=p.id;tk(p).push({id:uid(),t:v,d:false,due:$('#td').value,pr:$('#tpr').value});p.updated=Date.now();save();render();$('#tn').focus();toast('Task added to '+p.name)};$('#tadd').onclick=add;$('#tn').onkeydown=e=>{if(e.key=='Enter')add()};$('#tflt').onclick=()=>{V.tf=V.tf=='all'?'open':'all';render()}}
+ if(V.tab=='note'){$('#nadd').onclick=()=>noteForm();const q=$('#nq');q.oninput=()=>{V.nq=q.value;const c=q.selectionStart;render();const n=$('#nq');n.focus();n.setSelectionRange(c,c)}}}
+const go=t=>{V.tab=t;$$('nav button').forEach(x=>x.classList.toggle('on',x.dataset.t==t));render()};
+function palette(){const nm={dash:'Dashboard',proj:'Projects',task:'Tasks',note:'Notes',stat:'Analytics'};const items=[...Object.keys(nm).map(t=>({l:'Go to '+nm[t],f:()=>go(t)})),{l:'New project',f:()=>form()},{l:'New note',f:()=>noteForm()},...P.map(p=>({l:'Project: '+p.name,f:()=>details(p)})),...N.map(n=>({l:'Note: '+(n.title||'Untitled'),f:()=>noteForm(n)})),...[INBOX,...P].flatMap(p=>tk(p).filter(t=>!t.d).map(t=>({l:'Task: '+t.t+' · '+p.name,f:()=>go('task')})))];
+ const o=modal(`<input class="in" id="pq" placeholder="Type a command, project, task or note…" style="width:100%"><div class="tl" id="pl" style="margin-top:10px;padding:0"></div>`);let sel=0,cur=[];
+ const draw=()=>{const q=$('#pq',o).value.toLowerCase();cur=items.filter(i=>i.l.toLowerCase().includes(q)).slice(0,8);sel=Math.min(sel,Math.max(cur.length-1,0));$('#pl',o).innerHTML=cur.map((i,k)=>`<div class="pi ${k==sel?'on':''}" data-k="${k}">${esc(i.l)}</div>`).join('')||'<div class="pi">No matches</div>'};
+ const run=k=>{const i=cur[k];if(i){o.remove();i.f()}};const q=$('#pq',o);
+ q.oninput=()=>{sel=0;draw()};q.onkeydown=e=>{if(e.key=='ArrowDown'){sel=Math.min(sel+1,cur.length-1);draw();e.preventDefault()}else if(e.key=='ArrowUp'){sel=Math.max(sel-1,0);draw();e.preventDefault()}else if(e.key=='Enter')run(sel)};
+ $('#pl',o).onclick=e=>{const d=e.target.closest('[data-k]');if(d)run(+d.dataset.k)};draw();q.focus()}
+const FT={left:1500,on:false,iv:0,done:(()=>{try{return +localStorage.getItem('codehub.ft'+td())||0}catch{return 0}})()},tfmt=()=>String(Math.floor(FT.left/60)).padStart(2,'0')+':'+String(FT.left%60).padStart(2,'0'),T0='CodeHUB by Namith';
+document.addEventListener('click',e=>{if(e.target.id=='fts'){FT.on=!FT.on;clearInterval(FT.iv);if(FT.on)FT.iv=setInterval(()=>{FT.left--;const el=$('#ft');if(el)el.textContent=tfmt();document.title=tfmt()+' · CodeHUB';if(FT.left<=0){clearInterval(FT.iv);FT.on=false;FT.left=1500;FT.done++;try{localStorage.setItem('codehub.ft'+td(),FT.done)}catch{}toast('Focus session complete 🎉');document.title=T0;render()}},1000);render()}
+ else if(e.target.id=='ftr'){clearInterval(FT.iv);FT.on=false;FT.left=1500;document.title=T0;render()}});
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()=='k'&&!$('#app').classList.contains('hide')){e.preventDefault();if(!$('#pq'))palette()}});
+$('#pal').onclick=palette;
+function noteAct(b){const n=N.find(x=>x.id==b.closest('[data-nid]').dataset.nid);if(!n)return;const a=b.dataset.n;
+ if(a=='pin'){n.pin=!n.pin;saveN();render()}else if(a=='edit')noteForm(n);else if(confirm('Delete this note?')){N=N.filter(x=>x!=n);saveN();render()}}
+function noteForm(n){const nw=!n;n=n||{id:uid(),title:'',body:'',pid:'',pin:false};const o=modal(`<h2>${nw?'New':'Edit'} note</h2><div class="fm"><label class="w">Title<input id="nt1" value="${esc(n.title)}"></label><label class="w">Project<select id="np"><option value="">General</option>${P.map(p=>`<option value="${p.id}" ${p.id==n.pid?'selected':''}>${esc(p.name)}</option>`).join('')}</select></label><label class="w">Note<textarea id="nb" style="min-height:200px">${esc(n.body)}</textarea></label></div><div class="ft"><button class="btn" id="cx">Cancel</button><button class="btn pri" id="sv">Save</button></div>`);
+ $('#cx',o).onclick=()=>o.remove();$('#sv',o).onclick=()=>{Object.assign(n,{title:$('#nt1',o).value.trim(),body:$('#nb',o).value,pid:$('#np',o).value,updated:Date.now()});if(!n.title&&!n.body)return o.remove();if(nw)N.unshift(n);saveN();o.remove();render()}}
+function form(p){let ph=null;const n=!p;p=p||{name:'',desc:'',status:'Planning',priority:'Medium',progress:0,deadline:'',techs:[],tags:[],notes:'',path:'',folderName:''};
+ const o=modal(`<h2>${n?'Add Project':'Edit Project'}</h2><div class="fm">
+ <label class="w">Name<input id="f-n" value="${esc(p.name)}" placeholder="My awesome app"></label>
+ <label class="w">Description<textarea id="f-d">${esc(p.desc)}</textarea></label>
+ <label>Status<select id="f-s">${ST.map(s=>`<option ${s==p.status?'selected':''}>${s}</option>`).join('')}</select></label>
+ <label>Priority<select id="f-p">${PR.map(s=>`<option ${s==p.priority?'selected':''}>${s}</option>`).join('')}</select></label>
+ <label>Progress: <span id="pv">${p.progress}</span>%<input type="range" id="f-g" min="0" max="100" value="${p.progress}"></label>
+ <label>Deadline<input type="date" id="f-dl" value="${p.deadline||''}"></label>
+ <label>Technologies (comma separated)<input id="f-t" value="${esc(p.techs.join(', '))}" placeholder="React, Flutter"></label>
+ <label>Tags (comma separated)<input id="f-tg" value="${esc(p.tags.join(', '))}" placeholder="client, robotics"></label>
+ <label class="w">Notes<textarea id="f-nt">${esc(p.notes)}</textarea></label>
+ <label class="w">Folder path (optional, for “Copy path” → Explorer)<input id="f-pa" value="${esc(p.path)}" placeholder="C:\\Users\\Namith\\Projects\\my-app"></label>
+ <label class="w">Repository URL (optional)<input id="f-rp" value="${esc(p.repo||'')}" placeholder="https://github.com/NamithRN/..."></label>
+ <div class="w"><button class="btn" id="f-f">${I.folder} Choose Project Folder</button> <span id="f-fn" class="d">${p.folderName?'Linked: '+esc(p.folderName):'No folder linked'}</span></div></div>
+ <div class="ft"><button class="btn" id="cx">Cancel</button><button class="btn pri" id="sv">Save</button></div>`);
+ $('#cx',o).onclick=()=>o.remove();$('#f-g',o).oninput=e=>$('#pv',o).textContent=e.target.value;
+ $('#f-f',o).onclick=async()=>{const h=await pick();if(h){ph=h;$('#f-fn',o).textContent='Linked: '+h.name}};
+ $('#sv',o).onclick=async()=>{const name=$('#f-n',o).value.trim();if(!name)return toast('Project name is required');
+  const l=s=>$(s,o).value.split(',').map(x=>x.trim()).filter(Boolean),now=Date.now();
+  Object.assign(p,{name,desc:$('#f-d',o).value.trim(),status:$('#f-s',o).value,priority:$('#f-p',o).value,progress:+$('#f-g',o).value,deadline:$('#f-dl',o).value,techs:l('#f-t'),tags:l('#f-tg'),notes:$('#f-nt',o).value,path:$('#f-pa',o).value.trim(),repo:(v=>/^https?:\/\//.test(v)?v:'')($('#f-rp',o).value.trim()),updated:now});
+  if(p.status=='Completed'&&p.progress<100&&confirm('Status is Completed. Set progress to 100%?'))p.progress=100;
+  if(n){Object.assign(p,{id:uid(),created:now,opened:null,pinned:false});P.unshift(p)}
+  if(ph){await idb('put',p.id,ph);p.folderName=ph.name}
+  save();o.remove();render();toast(n?'Project added':'Project updated')}}
+if(sessionStorage.getItem('codehub.ok'))enter();
+</script></body></html>
